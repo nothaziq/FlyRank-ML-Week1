@@ -215,10 +215,13 @@ TEMPLATE = Template(r"""<!DOCTYPE html>
 
 <div class="abstract">
   <h2>Abstract</h2>
-  <p>A content reviewer with about 50 slots a week has to choose which of tens of thousands of
-  already-ranking pages to open first, and that order was previously set by client priority rather
-  than by evidence. Using an anonymized $rows_fmt-row slice of FlyRank search-performance data
-  ($pages_fmt pages across $clients clients, two consecutive 30-day windows), I defined the outcome as a
+  <p><strong>FlyRank is an SEO content agency producing and managing content — much of it
+  AI-assisted — across dozens of client portfolios at once</strong>, where a content reviewer has
+  roughly 50 slots a week to open pages by hand against a shared portfolio of tens of thousands,
+  and before this work that order was set by client priority and whoever asked most recently
+  rather than by any measured signal. Using an anonymized $rows_fmt-row slice of FlyRank
+  search-performance data ($pages_fmt pages across $clients clients, two consecutive 30-day
+  windows), I defined the outcome as a
   <em>persisting</em> click shortfall — a page still earning under half its position band's typical
   click-through rate one window later — and ranked pages by four models plus the transparent
   hand-written rule built in Week 4, scored out-of-fold under a client-grouped split because one
@@ -249,12 +252,22 @@ TEMPLATE = Template(r"""<!DOCTYPE html>
 <section id="problem">
 <h2><span class="sec">1 · Introduction</span>The queue existed. The evidence behind its order did not.</h2>
 
+<p><strong>The FlyRank content problem, concretely.</strong> FlyRank writes and maintains search
+content for dozens of clients at once, much of it produced with AI assistance and reviewed by a
+small human team. That combination — many clients, a large shared page count, and a chronically
+scarce review resource — is exactly where an unmeasured priority queue costs the most: a reviewer
+cannot personally track tens of thousands of pages across dozens of accounts, so <em>something</em>
+has to decide who gets looked at first, and until now that something was informal.</p>
+
 <p>Monday morning, a FlyRank content reviewer opens a list. There are tens of thousands of pages in
 the portfolio and room for about fifty of them in a week. Which fifty?</p>
 
 <p>Before this work the answer came from client priority and from whoever had asked most recently.
 That is not a bad process — it is an <em>unmeasured</em> one, and an unmeasured process cannot be
-improved or defended. The question this paper answers is narrow on purpose:</p>
+improved, defended, or handed off. Two things follow directly from that shape of problem: the
+queue has to work across very different clients without secretly becoming a queue for one of
+them, and it has to say plainly when it does not know — both become central findings below, not
+just design constraints. The question this paper answers is narrow on purpose:</p>
 
 <p><strong>Among pages already visible in search, can a learned ranking identify — better than a
 transparent hand-written rule — the ones whose click shortfall is still there a month later?</strong></p>

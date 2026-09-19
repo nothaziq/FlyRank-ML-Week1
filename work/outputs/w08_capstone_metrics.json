@@ -3,8 +3,8 @@
   "paper": "docs/index.html",
   "lane": "Lane 4 - CTR / Engagement Opportunity Scoring",
   "seed": 42,
-  "sklearn": "1.8.0",
-  "pandas": "3.0.2",
+  "sklearn": "1.9.1",
+  "pandas": "3.0.6",
   "question": "Among pages already visible in search, can a learned ranking identify -- better than a transparent hand-written rule -- the ones whose click shortfall is still there a month later?",
   "data": {
     "release": "anonymized starter slice data/raw/content_refresh_anonymized.csv",
@@ -57,7 +57,7 @@
     "features": 16,
     "banned_columns": 23,
     "declared_contamination": "avg_position is a 90d average overlapping the outcome window",
-    "contamination_cost_pr_auc": 0.0051
+    "contamination_cost_pr_auc": 0.0075
   },
   "results": {
     "Base rate (random order)": {
@@ -87,7 +87,7 @@
       "P@100": 0.7,
       "R@100": 0.0748,
       "ROC-AUC": 0.8874,
-      "PR-AUC": 0.4502,
+      "PR-AUC": 0.4501,
       "P@50 lift": 7.356,
       "P@50 per-fold mean": 0.552,
       "P@50 per-fold sd": 0.1177
@@ -104,45 +104,45 @@
       "P@50 per-fold sd": 0.0693
     },
     "Random Forest": {
-      "P@20": 0.95,
+      "P@20": 1.0,
       "P@50": 0.92,
-      "P@100": 0.86,
-      "R@100": 0.0919,
-      "ROC-AUC": 0.9004,
-      "PR-AUC": 0.5621,
+      "P@100": 0.89,
+      "R@100": 0.0951,
+      "ROC-AUC": 0.9017,
+      "PR-AUC": 0.5634,
       "P@50 lift": 9.6679,
-      "P@50 per-fold mean": 0.644,
-      "P@50 per-fold sd": 0.1632
+      "P@50 per-fold mean": 0.648,
+      "P@50 per-fold sd": 0.151
     },
     "Gradient Boosting": {
-      "P@20": 0.95,
-      "P@50": 0.94,
-      "P@100": 0.87,
-      "R@100": 0.0929,
-      "ROC-AUC": 0.8978,
-      "PR-AUC": 0.5382,
-      "P@50 lift": 9.878,
-      "P@50 per-fold mean": 0.64,
-      "P@50 per-fold sd": 0.1654
+      "P@20": 0.9,
+      "P@50": 0.88,
+      "P@100": 0.89,
+      "R@100": 0.0951,
+      "ROC-AUC": 0.8986,
+      "PR-AUC": 0.5369,
+      "P@50 lift": 9.2475,
+      "P@50 per-fold mean": 0.632,
+      "P@50 per-fold sd": 0.1662
     }
   },
   "best_model": "Random Forest",
   "base_rate": 0.0952,
   "split_comparison": {
     "BEFORE: random KFold(5)": {
-      "P@50 (pooled)": 1.0,
-      "P@50 (per-fold mean)": 0.844,
-      "P@50 (per-fold sd)": 0.071,
+      "P@50 (pooled)": 0.98,
+      "P@50 (per-fold mean)": 0.832,
+      "P@50 (per-fold sd)": 0.069,
       "ROC-AUC": 0.912,
-      "PR-AUC": 0.584,
+      "PR-AUC": 0.585,
       "clients seen in training AND scoring, per fold": 24.4
     },
     "AFTER: GroupKFold(5) on client_id": {
       "P@50 (pooled)": 0.92,
-      "P@50 (per-fold mean)": 0.644,
-      "P@50 (per-fold sd)": 0.163,
-      "ROC-AUC": 0.9,
-      "PR-AUC": 0.562,
+      "P@50 (per-fold mean)": 0.648,
+      "P@50 (per-fold sd)": 0.151,
+      "ROC-AUC": 0.902,
+      "PR-AUC": 0.563,
       "clients seen in training AND scoring, per fold": 0.0
     }
   },
@@ -150,19 +150,19 @@
   "recommendations": {
     "tiers": {
       "A - review first": {
-        "pages": 922,
-        "observed_rate": 0.5239,
-        "lift_vs_base": 5.51
+        "pages": 912,
+        "observed_rate": 0.5296,
+        "lift_vs_base": 5.57
       },
       "B - review if slots remain": {
-        "pages": 1261,
-        "observed_rate": 0.2228,
-        "lift_vs_base": 2.34
+        "pages": 1275,
+        "observed_rate": 0.2251,
+        "lift_vs_base": 2.37
       },
       "C - monitor only": {
-        "pages": 7653,
-        "observed_rate": 0.0225,
-        "lift_vs_base": 0.24
+        "pages": 7649,
+        "observed_rate": 0.0217,
+        "lift_vs_base": 0.23
       }
     },
     "archetype_action_map": {
@@ -175,8 +175,8 @@
       "no_clear_archetype": "manual_triage"
     },
     "archetype_mix_top200": {
-      "page_two_climber": 158,
-      "page_one_snippet_gap": 33,
+      "page_two_climber": 160,
+      "page_one_snippet_gap": 31,
       "deep_page_shortfall": 5,
       "no_clear_archetype": 4
     },
@@ -222,7 +222,7 @@
     },
     {
       "limitation": "Client concentration",
-      "measured as": "largest client = 40% of universe, 72% of top 50",
+      "measured as": "largest client = 40% of universe, 76% of top 50",
       "what it forbids": "no portfolio-level claim"
     },
     {
@@ -232,12 +232,12 @@
     },
     {
       "limitation": "Edge is inside the noise",
-      "measured as": "per-fold P@50 sd = 0.163",
+      "measured as": "per-fold P@50 sd = 0.151",
       "what it forbids": "'not worse, plausibly better', not 'beats'"
     },
     {
       "limitation": "Declared contamination",
-      "measured as": "position removed costs 0.005 PR-AUC",
+      "measured as": "position removed costs 0.008 PR-AUC",
       "what it forbids": "bounded and disclosed, not removed"
     },
     {

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Can a learned ranking beat a hand-written rule at choosing which pages to review first?</title>
 <meta name="description" content="A client-grouped evaluation of learned ranking vs a transparent rule for prioritising content review, on 30,000 rows of anonymized search performance data. Precision@50 0.92 vs 0.88, against a base rate of 0.095.">
-<meta name="author" content="nothaziq">
+<meta name="author" content="Muhammad Haziq Shahid">
 <meta property="og:title" content="Can a learned ranking beat a hand-written rule at choosing which pages to review first?">
 <meta property="og:description" content="Precision@50 of 0.92 vs a hand-written rule's 0.88, base rate 0.095 — and why the gap is smaller than it looks.">
 <meta property="og:type" content="article">
@@ -111,7 +111,7 @@
   <div class="wrap">
     <p class="eyebrow">FlyRank ML Internship · Capstone · Lane 4 — CTR / Engagement Opportunity Scoring</p>
     <h1>Can a learned ranking beat a hand-written rule at choosing which pages to review first?</h1>
-    <p class="byline">nothaziq · September 2026 · <a href="https://github.com/nothaziq/FlyRank-ML-Week1">code and notebooks on GitHub</a></p>
+    <p class="byline">Muhammad Haziq Shahid · September 2026 · <a href="https://github.com/nothaziq/FlyRank-ML-Week1">code and notebooks on GitHub</a></p>
   </div>
 </header>
 
@@ -119,10 +119,13 @@
 
 <div class="abstract">
   <h2>Abstract</h2>
-  <p>A content reviewer with about 50 slots a week has to choose which of tens of thousands of
-  already-ranking pages to open first, and that order was previously set by client priority rather
-  than by evidence. Using an anonymized 30,000-row slice of FlyRank search-performance data
-  (9,836 pages across 28 clients, two consecutive 30-day windows), I defined the outcome as a
+  <p><strong>FlyRank is an SEO content agency producing and managing content — much of it
+  AI-assisted — across dozens of client portfolios at once</strong>, where a content reviewer has
+  roughly 50 slots a week to open pages by hand against a shared portfolio of tens of thousands,
+  and before this work that order was set by client priority and whoever asked most recently
+  rather than by any measured signal. Using an anonymized 30,000-row slice of FlyRank
+  search-performance data (9,836 pages across 28 clients, two consecutive 30-day
+  windows), I defined the outcome as a
   <em>persisting</em> click shortfall — a page still earning under half its position band's typical
   click-through rate one window later — and ranked pages by four models plus the transparent
   hand-written rule built in Week 4, scored out-of-fold under a client-grouped split because one
@@ -131,7 +134,7 @@
   order (precision@50 of 0.92, 0.88 and 0.095 respectively). Counted per fold rather than
   pooled the model and the rule sit within one standard deviation of each other, so the honest
   claim is <em>not worse than the rule, plausibly somewhat better</em> — and a plain random split
-  would have reported 1.00 instead, which is the more useful finding. The output is
+  would have reported 0.98 instead, which is the more useful finding. The output is
   decision-support for ordering a human review queue in one portfolio over one pair of windows:
   it does not predict search rankings, does not estimate the value of a fix, and cannot support
   any causal claim about content changes.</p>
@@ -153,12 +156,22 @@
 <section id="problem">
 <h2><span class="sec">1 · Introduction</span>The queue existed. The evidence behind its order did not.</h2>
 
+<p><strong>The FlyRank content problem, concretely.</strong> FlyRank writes and maintains search
+content for dozens of clients at once, much of it produced with AI assistance and reviewed by a
+small human team. That combination — many clients, a large shared page count, and a chronically
+scarce review resource — is exactly where an unmeasured priority queue costs the most: a reviewer
+cannot personally track tens of thousands of pages across dozens of accounts, so <em>something</em>
+has to decide who gets looked at first, and until now that something was informal.</p>
+
 <p>Monday morning, a FlyRank content reviewer opens a list. There are tens of thousands of pages in
 the portfolio and room for about fifty of them in a week. Which fifty?</p>
 
 <p>Before this work the answer came from client priority and from whoever had asked most recently.
 That is not a bad process — it is an <em>unmeasured</em> one, and an unmeasured process cannot be
-improved or defended. The question this paper answers is narrow on purpose:</p>
+improved, defended, or handed off. Two things follow directly from that shape of problem: the
+queue has to work across very different clients without secretly becoming a queue for one of
+them, and it has to say plainly when it does not know — both become central findings below, not
+just design constraints. The question this paper answers is narrow on purpose:</p>
 
 <p><strong>Among pages already visible in search, can a learned ranking identify — better than a
 transparent hand-written rule — the ones whose click shortfall is still there a month later?</strong></p>
@@ -273,7 +286,7 @@ what random order would have given.</p>
   outcome window sits inside those 90 days, so the position band leaks a thin trace of the outcome. It
   is kept because the baseline uses it too — removing it only for the model would rig the comparison —
   and the entire model was refit with position removed to measure what the trace is worth. The answer:
-  <strong>0.005 of PR-AUC.</strong> Real, bounded, disclosed, not eliminated.</li>
+  <strong>0.007 of PR-AUC.</strong> Real, bounded, disclosed, not eliminated.</li>
 </ul>
 </section>
 
@@ -291,8 +304,8 @@ recomputed in the same run, not quoted from an earlier week.</p>
 <tr><th scope='row'>Rule baseline (Week 4)</th><td>0.95</td><td><strong>0.88</strong></td><td>0.84</td><td>0.721</td><td>0.403</td><td>0.62 ± 0.15</td></tr>
 <tr><th scope='row'>Logistic Regression</th><td>0.85</td><td><strong>0.70</strong></td><td>0.70</td><td>0.887</td><td>0.450</td><td>0.55 ± 0.12</td></tr>
 <tr><th scope='row'>Decision Tree (d=3)</th><td>0.55</td><td><strong>0.52</strong></td><td>0.55</td><td>0.884</td><td>0.427</td><td>0.46 ± 0.07</td></tr>
-<tr class="hl"><th scope='row'>Random Forest</th><td>0.95</td><td><strong>0.92</strong></td><td>0.86</td><td>0.900</td><td>0.562</td><td>0.64 ± 0.16</td></tr>
-<tr><th scope='row'>Gradient Boosting</th><td>0.95</td><td><strong>0.94</strong></td><td>0.87</td><td>0.898</td><td>0.538</td><td>0.64 ± 0.17</td></tr>
+<tr class="hl"><th scope='row'>Random Forest</th><td>1.00</td><td><strong>0.92</strong></td><td>0.89</td><td>0.902</td><td>0.563</td><td>0.65 ± 0.15</td></tr>
+<tr><th scope='row'>Gradient Boosting</th><td>0.90</td><td><strong>0.88</strong></td><td>0.89</td><td>0.899</td><td>0.537</td><td>0.63 ± 0.17</td></tr>
   </tbody>
 </table>
 </div>
@@ -314,8 +327,8 @@ recomputed in the same run, not quoted from an earlier week.</p>
 
 <h3>The finding worth more than the headline</h3>
 <p>The same model, scored under a plain random split instead of a client-grouped one, reports a
-precision@50 of <strong>1.00</strong> instead of 0.92 — and per-fold, 0.84 instead of
-0.64. Nothing about the model changed. What changed is that under a random split
+precision@50 of <strong>0.98</strong> instead of 0.92 — and per-fold, 0.83 instead of
+0.65. Nothing about the model changed. What changed is that under a random split
 <strong>about 24 of 28 clients appear on both sides of every fold</strong>, so the model
 can recognise the client rather than the pattern. Under the grouped split, zero do.</p>
 
@@ -323,7 +336,7 @@ can recognise the client rather than the pattern. Under the grouped split, zero 
   <img class="fig" src="img/fig3_split_honesty.png" alt="Bar chart comparing precision at 50 for the same model under four scorings: pooled random split, pooled client-grouped split, per-fold random split with error bar, and per-fold client-grouped split with a larger error bar.">
   <figcaption><b>The same model, scored four ways.</b> The left pair is the flattering number; the right
   pair is the defensible one. Error bars are the fold-to-fold standard deviation — and the grouped
-  split's spread (± 0.16) is wider than the entire gap between the model and the hand-written rule.
+  split's spread (± 0.15) is wider than the entire gap between the model and the hand-written rule.
   Every headline number on this page is from the grouped split.</figcaption>
 </figure>
 
@@ -359,10 +372,10 @@ limitation without a number is a disclaimer, and disclaimers get skipped.</p>
   <tbody>
 <tr><th scope='row'>Not causal</th><td>no intervention assigned, no control group</td><td>cannot say a rewrite produces clicks</td></tr>
 <tr><th scope='row'>Proxy label</th><td>persisted_shortfall is an author-defined rule</td><td>measures a gap staying open, not fixability</td></tr>
-<tr><th scope='row'>Client concentration</th><td>largest client = 40% of universe, 72% of top 50</td><td>no portfolio-level claim</td></tr>
+<tr><th scope='row'>Client concentration</th><td>largest client = 40% of universe, 76% of top 50</td><td>no portfolio-level claim</td></tr>
 <tr><th scope='row'>Survivorship</th><td>1,683 pages excluded from the later window (15%)</td><td>rates describe pages that stayed measurable</td></tr>
-<tr><th scope='row'>Edge is inside the noise</th><td>per-fold P@50 sd = 0.163</td><td>'not worse, plausibly better', not 'beats'</td></tr>
-<tr><th scope='row'>Declared contamination</th><td>position removed costs 0.005 PR-AUC</td><td>bounded and disclosed, not removed</td></tr>
+<tr><th scope='row'>Edge is inside the noise</th><td>per-fold P@50 sd = 0.151</td><td>'not worse, plausibly better', not 'beats'</td></tr>
+<tr><th scope='row'>Declared contamination</th><td>position removed costs 0.008 PR-AUC</td><td>bounded and disclosed, not removed</td></tr>
 <tr><th scope='row'>One time window</th><td>one pair of consecutive 30-day windows, no calendar dates</td><td>no seasonality claim</td></tr>
 <tr><th scope='row'>Starter slice</th><td>30,000 rows, 28 clients</td><td>not the ~79M-row warehouse release</td></tr>
 <tr><th scope='row'>Blind to topic and quality</th><td>0 of 16 features carry topic or text</td><td>human is the only control</td></tr>
@@ -388,9 +401,9 @@ action below without retraining anything.</p>
 <table>
   <thead><tr><th>Tier</th><th class="num">Pages</th><th class="num">Observed shortfall rate</th><th class="num">vs base rate</th></tr></thead>
   <tbody>
-<tr><th scope='row'>A - review first</th><td class='num'>922</td><td class='num'><strong>52%</strong></td><td class='num'>5.5×</td></tr>
-<tr><th scope='row'>B - review if slots remain</th><td class='num'>1,261</td><td class='num'><strong>22%</strong></td><td class='num'>2.3×</td></tr>
-<tr><th scope='row'>C - monitor only</th><td class='num'>7,653</td><td class='num'><strong>2%</strong></td><td class='num'>0.2×</td></tr>
+<tr><th scope='row'>A - review first</th><td class='num'>912</td><td class='num'><strong>53%</strong></td><td class='num'>5.6×</td></tr>
+<tr><th scope='row'>B - review if slots remain</th><td class='num'>1,275</td><td class='num'><strong>23%</strong></td><td class='num'>2.4×</td></tr>
+<tr><th scope='row'>C - monitor only</th><td class='num'>7,649</td><td class='num'><strong>2%</strong></td><td class='num'>0.2×</td></tr>
   </tbody>
 </table>
 </div>
@@ -410,8 +423,8 @@ eye, and the archetype — not the model — determines the suggested action.</p
 <table>
   <thead><tr><th>Archetype</th><th>Suggested first action</th><th class="num">In top 200</th></tr></thead>
   <tbody>
-<tr><th scope='row'><code>page_one_snippet_gap</code></th><td><code>review_title_and_meta</code></td><td class='num'>33</td></tr>
-<tr><th scope='row'><code>page_two_climber</code></th><td><code>review_title_meta_and_onpage_relevance</code></td><td class='num'>158</td></tr>
+<tr><th scope='row'><code>page_one_snippet_gap</code></th><td><code>review_title_and_meta</code></td><td class='num'>31</td></tr>
+<tr><th scope='row'><code>page_two_climber</code></th><td><code>review_title_meta_and_onpage_relevance</code></td><td class='num'>160</td></tr>
 <tr><th scope='row'><code>deep_page_shortfall</code></th><td><code>relevance_and_internal_link_review</code></td><td class='num'>5</td></tr>
 <tr><th scope='row'><code>thin_informational</code></th><td><code>check_page_answers_the_query</code></td><td class='num'>—</td></tr>
 <tr><th scope='row'><code>commercial_intent_review</code></th><td><code>human_intent_check_before_content_work</code></td><td class='num'>—</td></tr>
@@ -475,7 +488,7 @@ from the analysis.</p>
   <li><strong>Weekly notebooks:</strong> <a href="https://github.com/nothaziq/FlyRank-ML-Week1/tree/main/work/notebooks">research question → data contract → signal audit → baseline → model → validation audit → action playbook</a></li>
   <li><strong>Committed receipts:</strong> <a href="https://github.com/nothaziq/FlyRank-ML-Week1/tree/main/work/outputs">metrics JSON for every week</a>, so any figure quoted here traces to a key in a file</li>
   <li><strong>Page generator:</strong> <a href="https://github.com/nothaziq/FlyRank-ML-Week1/blob/main/work/build_paper.py"><code>work/build_paper.py</code></a></li>
-  <li><strong>Seed:</strong> 42 · <strong>scikit-learn</strong> 1.8.0 · <strong>pandas</strong> 3.0.2</li>
+  <li><strong>Seed:</strong> 42 · <strong>scikit-learn</strong> 1.9.1 · <strong>pandas</strong> 3.0.6</li>
 </ul>
 
 <p>To rerun: clone the repo, <code>pip install -r requirements.txt</code>, then run
@@ -500,7 +513,7 @@ receipts from earlier weeks, which are library-independent and must match exactl
       search queries. Thanks to the FlyRank ML Internship track leads for the dataset, the weekly
       structure, and the review that turned a flattering random-split number into an honest
       client-grouped one.</p>
-      <p style="margin-bottom:0">Analysis and write-up: nothaziq, September 2026. Code under MIT; data under the
+      <p style="margin-bottom:0">Analysis and write-up: Muhammad Haziq Shahid, September 2026. Code under MIT; data under the
       programme's data-use terms.</p>
     </div>
   </div>
