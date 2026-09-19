@@ -1,0 +1,75 @@
+{
+  "signal_ctr_vs_position": {
+    "verdict": "MIXED",
+    "n": 12023,
+    "flag": "low_ctr_visible_page",
+    "flat_flag_hits": 9759,
+    "flat_flag_share": 0.8117,
+    "median_ctr_by_band": {
+      "0-3": 0.2,
+      "3-5": 0.33,
+      "5-7": 0.24,
+      "7-10": 0.19,
+      "10-15": 0.18,
+      "15-20": 0.16
+    }
+  },
+  "signal_volume_noise": {
+    "verdict": "CONFIRMED",
+    "n": 20256,
+    "zero_click_pct_by_volume": {
+      "<100": 85.8,
+      "100-250": 65.9,
+      "250-500": 53.9,
+      "500-1k": 32.9,
+      "1k-2k": 16.3,
+      "2k-5k": 5.0,
+      "5k-20k": 0.9,
+      "20k+": 0.1
+    }
+  },
+  "keyword_volume_check": {
+    "flagged_share": 0.885,
+    "unflagged_share": 0.95
+  },
+  "notebook": "w04_baseline_score.ipynb",
+  "lane": "Lane 4 - CTR / Engagement Opportunity Scoring",
+  "rule": {
+    "inputs": [
+      "impressions_90d",
+      "clicks_90d",
+      "avg_position"
+    ],
+    "bands": [
+      "0-3",
+      "3-5",
+      "5-7",
+      "7-10",
+      "10-15",
+      "15-20"
+    ],
+    "impressions_floor": 500,
+    "min_expected_clicks": 10,
+    "shortfall_ratio": 0.5,
+    "score": "expected clicks - actual clicks (90d)",
+    "reason_code": "ctr_below_position_norm",
+    "action_label": "review_title_meta"
+  },
+  "queue": {
+    "rows": 30000,
+    "eligible": 12023,
+    "flagged": 881,
+    "flat_flag_hits_same_universe": 9759,
+    "top_score": 942.8
+  },
+  "concentration": {
+    "largest_client_share_of_eligible": 0.366,
+    "largest_client_share_of_flagged": 0.595,
+    "largest_client_share_of_top100": 0.6
+  },
+  "leakage_check": {
+    "banned_columns_used": [],
+    "scrambled_columns_scores_unchanged": true,
+    "seed": 0
+  }
+}
