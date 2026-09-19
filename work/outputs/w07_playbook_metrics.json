@@ -1,0 +1,294 @@
+{
+  "notebook": "w07_action_playbook.ipynb",
+  "lane": "Lane 4 - CTR / Engagement Opportunity Scoring",
+  "seed": 42,
+  "sklearn": "1.9.1",
+  "intended_use": {
+    "user": "one internal FlyRank content reviewer, ~50 review slots per week",
+    "decision": "order in which pages get a human look",
+    "replaces": "client priority / most recent request",
+    "not_for": [
+      "client-facing reporting",
+      "forecasting",
+      "causal claims",
+      "content quality scoring",
+      "writer or agency evaluation",
+      "any automated publishing action"
+    ],
+    "production": false
+  },
+  "universe": {
+    "pages": 9836,
+    "clients": 28,
+    "base_rate": 0.0952,
+    "dropped_not_eligible_later_window": 1683,
+    "largest_client_share_of_universe": 0.401,
+    "largest_client_share_of_top200": 0.775
+  },
+  "queue": {
+    "scored_rows": 9836,
+    "working_queue_K": 200,
+    "tiers": {
+      "A - review first": {
+        "pages": 912,
+        "observed_shortfall_rate": 0.5296,
+        "lift_vs_base": 5.57
+      },
+      "B - review if slots remain": {
+        "pages": 1275,
+        "observed_shortfall_rate": 0.2251,
+        "lift_vs_base": 2.37
+      },
+      "C - monitor only": {
+        "pages": 7649,
+        "observed_shortfall_rate": 0.0217,
+        "lift_vs_base": 0.23
+      }
+    },
+    "archetype_mix_top200": {
+      "page_two_climber": 160,
+      "page_one_snippet_gap": 31,
+      "deep_page_shortfall": 5,
+      "no_clear_archetype": 4
+    },
+    "archetype_action_map": {
+      "page_one_snippet_gap": {
+        "action": "review_title_and_meta",
+        "priority": "high"
+      },
+      "page_two_climber": {
+        "action": "review_title_meta_and_onpage_relevance",
+        "priority": "high"
+      },
+      "deep_page_shortfall": {
+        "action": "relevance_and_internal_link_review",
+        "priority": "low"
+      },
+      "thin_informational": {
+        "action": "check_page_answers_the_query",
+        "priority": "medium"
+      },
+      "commercial_intent_review": {
+        "action": "human_intent_check_before_content_work",
+        "priority": "medium"
+      },
+      "navigational_no_action": {
+        "action": "no_action_remove_from_queue",
+        "priority": "none"
+      },
+      "no_clear_archetype": {
+        "action": "manual_triage",
+        "priority": "low"
+      }
+    },
+    "blocked_until_checked_top200": 127,
+    "reason_code_frequency": {
+      "analytics_click_session_mismatch": 4918,
+      "page_two_position": 4530,
+      "high_impression_volume": 3973,
+      "commercial_intent_generic_format": 3927,
+      "no_recent_update": 3580,
+      "deep_position": 3517,
+      "ctr_far_below_band_norm": 2915,
+      "page_one_position": 1789,
+      "low_volume_noisy_signal": 1158,
+      "ctr_below_band_norm": 1045,
+      "thin_for_informational_intent": 965,
+      "large_absolute_click_gap": 420,
+      "model_rule_disagreement": 238,
+      "navigational_intent_norms_do_not_apply": 8
+    }
+  },
+  "ranking_quality": {
+    "P@50_model_pooled": 0.92,
+    "P@50_rule_pooled": 0.88,
+    "P@50_base_rate": 0.0952,
+    "P@50_model_per_fold_mean": 0.648,
+    "P@50_model_per_fold_sd": 0.151,
+    "claim": "not worse than the Week-4 rule, plausibly somewhat better; the pooled gap sits inside the fold-to-fold spread (Week 6)"
+  },
+  "decay_refresh": {
+    "persistence_flagged": 0.5149,
+    "persistence_unflagged": 0.0543,
+    "persistence_lift": 9.48,
+    "topK_overlap_with_next_window": {
+      "50": 0.54,
+      "100": 0.54,
+      "200": 0.525
+    },
+    "share_pages_ctr_moved_over_50pct": 0.41,
+    "median_abs_impression_change": 0.325,
+    "content_age_gradient": "none observable across quintiles in this slice",
+    "update_recency_gradient": "not testable -- days_since_last_update is bimodal with near-empty middle buckets",
+    "operational_rules": {
+      "rebuild_queue_days": 30,
+      "queue_void_after_days": 45,
+      "before_after_readings_invalid_without_control_set": true
+    }
+  },
+  "cost_value": {
+    "slots_per_week": 50,
+    "slots_well_spent_random": 4.8,
+    "slots_well_spent_rule": 44.0,
+    "slots_well_spent_model_pooled": 46.0,
+    "slots_well_spent_model_per_fold": 32.4,
+    "click_shortfall_in_top50_per_30d": 1402.6,
+    "median_click_gap_top50": 22.5,
+    "monetary_value": null,
+    "monetary_value_reason": "cpc is 0 on 76% of rows and search_volume on 37%",
+    "recovery_rate": null,
+    "recovery_rate_reason": "no intervention was assigned; requires a held-out control set"
+  },
+  "human_review": {
+    "mandatory_flags": [
+      "CHECK_ANALYTICS_FIRST",
+      "CHECK_BRANDED_QUERY",
+      "CHECK_EVIDENCE_THIN",
+      "CHECK_INTENT_MATCH",
+      "CHECK_SITE_WIDE_CAUSE",
+      "CHECK_TOPIC_SENSITIVITY"
+    ],
+    "always_on": "CHECK_TOPIC_SENSITIVITY -- topic is not in the feature set, so a human is the only control",
+    "no_go": [
+      "auto-publishing any title, meta or body text",
+      "acting on navigational/branded pages",
+      "de-indexing, deleting, consolidating or redirecting",
+      "acting while the analytics-mismatch flag is open",
+      "page-by-page work while one client dominates the queue",
+      "scoring pages below the volume floor",
+      "any client-facing number, forecast or projected uplift",
+      "using the score to evaluate a writer, agency or team",
+      "running a queue older than 45 days",
+      "reading before/after on reviewed pages as an effect"
+    ]
+  },
+  "monitoring": {
+    "cadence": "monthly, run by a person",
+    "checks": [
+      {
+        "check": "base rate of persisted_shortfall",
+        "this run": "0.095",
+        "amber": "\u00b130%",
+        "red": "\u00b150%",
+        "cadence": "monthly",
+        "what it would mean": "the thing being ranked changed; precision@K is no longer comparable month to month"
+      },
+      {
+        "check": "P@50 of the shipped queue",
+        "this run": "0.920",
+        "amber": "< 0.88 (the rule)",
+        "red": "< 0.19",
+        "cadence": "monthly",
+        "what it would mean": "if it falls below the Week-4 rule, ship the rule -- it is free and needs no fitting"
+      },
+      {
+        "check": "largest client share of top 200",
+        "this run": "0.78",
+        "amber": "> 0.80",
+        "red": "> 0.90",
+        "cadence": "monthly",
+        "what it would mean": "the queue has become one client's worklist; portfolio framing no longer honest"
+      },
+      {
+        "check": "month-over-month top-200 overlap",
+        "this run": "0.53",
+        "amber": "< 0.35 or > 0.85",
+        "red": "< 0.20",
+        "cadence": "monthly",
+        "what it would mean": "too low = churn/noise; too high = the queue is frozen and nothing is being worked"
+      },
+      {
+        "check": "band norm drift (median %CTR/band)",
+        "this run": "{'0-3': 0.21, '3-5': 0.32, '5-7': 0.23, '7-10': 0.17, '10-15': 0.14, '15-20': 0.12}",
+        "amber": "any band \u00b120%",
+        "red": "any band \u00b135%",
+        "cadence": "monthly",
+        "what it would mean": "the LABEL is defined against these -- drift here changes the question, not just the answer"
+      },
+      {
+        "check": "sessions_per_click missing share",
+        "this run": "0.20",
+        "amber": "> 0.30",
+        "red": "> 0.45",
+        "cadence": "monthly",
+        "what it would mean": "an input is degrading; review flags start firing on noise"
+      },
+      {
+        "check": "pages dropping below volume floor",
+        "this run": "0.15",
+        "amber": "> 0.25",
+        "red": "> 0.35",
+        "cadence": "monthly",
+        "what it would mean": "survivorship is growing; rates in the playbook describe an increasingly filtered set"
+      },
+      {
+        "check": "reviewer accept rate of queue rows",
+        "this run": "NOT YET INSTRUMENTED",
+        "amber": "< 0.50",
+        "red": "< 0.30",
+        "cadence": "monthly",
+        "what it would mean": "the only check that tests the queue against human judgment -- must be captured from week one"
+      }
+    ],
+    "retrain_triggers": [
+      "any check red, or the same check amber two months running",
+      "new client above ~10% of eligible pages",
+      "band norms move more than 20% (this changes the label, not just the inputs)",
+      "schema or definition change in any input column",
+      "more than 90 days since the last fit"
+    ],
+    "caveat": "thresholds are set from a single observation and are hypotheses until a second month exists"
+  },
+  "limits": [
+    {
+      "limit": "Client concentration",
+      "measured as": "largest client = 40% of the universe, 78% of the top 200",
+      "what it forbids": "the queue largely describes one client's pages; a portfolio-level claim is not supported"
+    },
+    {
+      "limit": "Survivorship",
+      "measured as": "1,683 pages (15%) dropped below the volume floor in the later window",
+      "what it forbids": "pages that collapsed in traffic are excluded from every rate above, in both directions"
+    },
+    {
+      "limit": "Proxy label",
+      "measured as": "persisted_shortfall is a defined rule, not a reviewed outcome",
+      "what it forbids": "measures that a gap stayed open; says nothing about whether it was fixable"
+    },
+    {
+      "limit": "Declared contamination",
+      "measured as": "avg_position is a 90-day average overlapping the outcome window",
+      "what it forbids": "Week 5 refit without position: PR-AUC moved ~0.03 -- bounded, not the source of the result"
+    },
+    {
+      "limit": "Fold-to-fold spread",
+      "measured as": "per-fold P@50 sd = 0.151 around a mean of 0.648",
+      "what it forbids": "the pooled model-vs-rule gap sits inside this spread (Week 6); claim 'not worse, plausibly better'"
+    },
+    {
+      "limit": "Single time window",
+      "measured as": "one pair of consecutive 30-day windows",
+      "what it forbids": "no seasonality, no algorithm-update period, no repeat measurement"
+    },
+    {
+      "limit": "Unreliable columns",
+      "measured as": "cpc = 0 on 76% of rows; search_volume = 0 on 37%; sessions_per_click missing on 20%",
+      "what it forbids": "no monetary value is computed anywhere in this playbook -- the inputs would not carry it"
+    },
+    {
+      "limit": "Sample, not the release",
+      "measured as": "30,000-row anonymized slice",
+      "what it forbids": "the full ~79M-row release was not used; numbers are of this slice"
+    }
+  ],
+  "exports": {
+    "queue_csv": "work/outputs/w07_action_queue.csv (gitignored, regenerated by this notebook)",
+    "metrics_json": "work/outputs/w07_playbook_metrics.json (committed)",
+    "figures": [
+      "w07_archetype_mix.png",
+      "w07_precision_at_k.png",
+      "w07_queue_decay.png",
+      "w07_tier_calibration.png"
+    ]
+  }
+}
