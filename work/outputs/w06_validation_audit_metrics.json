@@ -1,0 +1,46 @@
+{
+  "notebook": "w06_validation_audit.ipynb",
+  "lane": "Lane 4 - CTR / Engagement Opportunity Scoring",
+  "paper_findings_audited": [
+    "Random Forest health-score feature importance (p.27)",
+    "Logistic regression growth prediction, 71% holdout accuracy (p.29)"
+  ],
+  "split_comparison": {
+    "BEFORE: random KFold(5)": {
+      "P@50 (pooled)": 0.98,
+      "P@50 (per-fold mean)": 0.832,
+      "P@50 (per-fold sd)": 0.0688,
+      "ROC-AUC": 0.9123,
+      "PR-AUC": 0.5848
+    },
+    "AFTER: GroupKFold(5) on client_id": {
+      "P@50 (pooled)": 0.92,
+      "P@50 (per-fold mean)": 0.648,
+      "P@50 (per-fold sd)": 0.151,
+      "ROC-AUC": 0.9017,
+      "PR-AUC": 0.5634
+    }
+  },
+  "client_overlap_per_fold": {
+    "random_kfold": [
+      24,
+      25,
+      25,
+      25,
+      23
+    ],
+    "group_kfold": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "leakage_audit": {
+    "banned_columns_present": [],
+    "planted_leak_auc_jump": null
+  },
+  "seed": 42,
+  "sklearn": "1.9.1"
+}
