@@ -1,0 +1,163 @@
+{
+  "notebook": "w05_model.ipynb",
+  "lane": "Lane 4 - CTR / Engagement Opportunity Scoring",
+  "design": {
+    "features_window": "prev_30d + static metadata",
+    "label_window": "last_30d",
+    "label": "persisted_shortfall: ctr_last < 0.5 x band norm (later window), expected clicks >= 10/3",
+    "split": "GroupKFold(5) on client_id, out-of-fold predictions",
+    "declared_contamination": "avg_position is a 90d average overlapping the outcome window; no-position refit reported",
+    "seed": 42,
+    "sklearn": "1.8.0"
+  },
+  "universe": {
+    "pages": 9836,
+    "clients": 28,
+    "dropped_not_eligible_later_window": 1683,
+    "base_rate": 0.0952
+  },
+  "results": {
+    "Base rate (random order)": {
+      "P@20": 0.0952,
+      "P@50": 0.0952,
+      "P@100": 0.0952,
+      "R@100": 0.0102,
+      "ROC-AUC": 0.5,
+      "PR-AUC": 0.0952,
+      "P@50 lift vs base": 1.0,
+      "P@50 per-fold sd": null
+    },
+    "Rule baseline (Week 4)": {
+      "P@20": 0.95,
+      "P@50": 0.88,
+      "P@100": 0.84,
+      "R@100": 0.0897,
+      "ROC-AUC": 0.7212,
+      "PR-AUC": 0.4028,
+      "P@50 lift vs base": 9.2475,
+      "P@50 per-fold sd": 0.1499
+    },
+    "Logistic Regression": {
+      "P@20": 0.85,
+      "P@50": 0.7,
+      "P@100": 0.7,
+      "R@100": 0.0748,
+      "ROC-AUC": 0.8874,
+      "PR-AUC": 0.4502,
+      "P@50 lift vs base": 7.356,
+      "P@50 per-fold sd": 0.1177
+    },
+    "Decision Tree (d=3)": {
+      "P@20": 0.55,
+      "P@50": 0.52,
+      "P@100": 0.55,
+      "R@100": 0.0588,
+      "ROC-AUC": 0.8844,
+      "PR-AUC": 0.4266,
+      "P@50 lift vs base": 5.4644,
+      "P@50 per-fold sd": 0.0693
+    },
+    "Random Forest": {
+      "P@20": 0.95,
+      "P@50": 0.92,
+      "P@100": 0.86,
+      "R@100": 0.0919,
+      "ROC-AUC": 0.9004,
+      "PR-AUC": 0.5621,
+      "P@50 lift vs base": 9.6679,
+      "P@50 per-fold sd": 0.1632
+    },
+    "Gradient Boosting": {
+      "P@20": 0.95,
+      "P@50": 0.94,
+      "P@100": 0.87,
+      "R@100": 0.0929,
+      "ROC-AUC": 0.8978,
+      "PR-AUC": 0.5382,
+      "P@50 lift vs base": 9.878,
+      "P@50 per-fold sd": 0.1654
+    }
+  },
+  "best_model": "Gradient Boosting",
+  "p50_per_fold": {
+    "Logistic Regression": [
+      0.7,
+      0.56,
+      0.44,
+      0.66,
+      0.4
+    ],
+    "Decision Tree (d=3)": [
+      0.52,
+      0.54,
+      0.36,
+      0.48,
+      0.4
+    ],
+    "Random Forest": [
+      0.94,
+      0.62,
+      0.54,
+      0.66,
+      0.46
+    ],
+    "Gradient Boosting": [
+      0.92,
+      0.74,
+      0.52,
+      0.52,
+      0.5
+    ],
+    "Rule baseline (Week 4)": [
+      0.82,
+      0.7,
+      0.48,
+      0.7,
+      0.42
+    ]
+  },
+  "top_features_permutation": [
+    {
+      "feature": "shortfall_clicks_prev",
+      "drop_in_PR_AUC": 0.2138
+    },
+    {
+      "feature": "log_impressions_prev",
+      "drop_in_PR_AUC": 0.2134
+    },
+    {
+      "feature": "ctr_prev",
+      "drop_in_PR_AUC": 0.0955
+    },
+    {
+      "feature": "ctr_vs_band_norm",
+      "drop_in_PR_AUC": 0.0391
+    },
+    {
+      "feature": "avg_position",
+      "drop_in_PR_AUC": 0.0191
+    }
+  ],
+  "no_position_refit": {
+    "Gradient Boosting (as reported)": {
+      "P@20": 0.95,
+      "P@50": 0.94,
+      "P@100": 0.87,
+      "R@100": 0.0929,
+      "ROC-AUC": 0.8978,
+      "PR-AUC": 0.5382,
+      "P@50 lift vs base": 9.878,
+      "P@50 per-fold sd": null
+    },
+    "Gradient Boosting (no position input)": {
+      "P@20": 0.95,
+      "P@50": 0.88,
+      "P@100": 0.85,
+      "R@100": 0.0908,
+      "ROC-AUC": 0.8971,
+      "PR-AUC": 0.527,
+      "P@50 lift vs base": 9.2475,
+      "P@50 per-fold sd": null
+    }
+  }
+}
