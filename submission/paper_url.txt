@@ -1,1 +1,1 @@
-PASTE-YOUR-DEPLOYED-PAPER-URL-HERE
+https://nothaziq.github.io/FlyRank-ML-Week1/

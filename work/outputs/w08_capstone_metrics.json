@@ -1,0 +1,271 @@
+{
+  "notebook": "capstone.ipynb",
+  "paper": "docs/index.html",
+  "lane": "Lane 4 - CTR / Engagement Opportunity Scoring",
+  "seed": 42,
+  "sklearn": "1.8.0",
+  "pandas": "3.0.2",
+  "question": "Among pages already visible in search, can a learned ranking identify -- better than a transparent hand-written rule -- the ones whose click shortfall is still there a month later?",
+  "data": {
+    "release": "anonymized starter slice data/raw/content_refresh_anonymized.csv",
+    "NOT_used": "the ~79M-row full warehouse release",
+    "rows": 30000,
+    "columns": 44,
+    "windows": "two consecutive relative 30-day windows inside a trailing 90-day export; no calendar dates",
+    "evaluation_universe_pages": 9836,
+    "clients": 28,
+    "exclusions": [
+      {
+        "step": "all rows in the slice",
+        "rows": 30000,
+        "why": ""
+      },
+      {
+        "step": "no position data or position > 20",
+        "rows": 9744,
+        "why": "band norms undefined; avg_position 0 = missing"
+      },
+      {
+        "step": "visible, but under the earlier-window volume floor",
+        "rows": 8737,
+        "why": "< 167 impressions in 30 days -- CTR not measurable"
+      },
+      {
+        "step": "eligible at decision time",
+        "rows": 11519,
+        "why": "the queue's candidate pool"
+      },
+      {
+        "step": "...dropped: below the floor in the LATER window",
+        "rows": 1683,
+        "why": "SURVIVORSHIP: outcome not measurable"
+      },
+      {
+        "step": "evaluation universe",
+        "rows": 9836,
+        "why": "every number in this paper"
+      }
+    ],
+    "survivorship_dropped": 1683
+  },
+  "method": {
+    "label": "persisted_shortfall -- later-window CTR < 0.5x band norm, with >= 3.3 expected clicks",
+    "label_type": "defined-rule proxy, not a reviewed outcome",
+    "baseline": "Week-4 hand-written rule on the earlier window",
+    "split": "GroupKFold(5) on client_id, out-of-fold predictions",
+    "metric": "precision@K, primary K=50, base rate always reported",
+    "features": 16,
+    "banned_columns": 23,
+    "declared_contamination": "avg_position is a 90d average overlapping the outcome window",
+    "contamination_cost_pr_auc": 0.0051
+  },
+  "results": {
+    "Base rate (random order)": {
+      "P@20": 0.0952,
+      "P@50": 0.0952,
+      "P@100": 0.0952,
+      "R@100": 0.0102,
+      "ROC-AUC": 0.5,
+      "PR-AUC": 0.0952,
+      "P@50 lift": 1.0,
+      "P@50 per-fold mean": 0.0952
+    },
+    "Rule baseline (Week 4)": {
+      "P@20": 0.95,
+      "P@50": 0.88,
+      "P@100": 0.84,
+      "R@100": 0.0897,
+      "ROC-AUC": 0.7212,
+      "PR-AUC": 0.4028,
+      "P@50 lift": 9.2475,
+      "P@50 per-fold mean": 0.624,
+      "P@50 per-fold sd": 0.1499
+    },
+    "Logistic Regression": {
+      "P@20": 0.85,
+      "P@50": 0.7,
+      "P@100": 0.7,
+      "R@100": 0.0748,
+      "ROC-AUC": 0.8874,
+      "PR-AUC": 0.4502,
+      "P@50 lift": 7.356,
+      "P@50 per-fold mean": 0.552,
+      "P@50 per-fold sd": 0.1177
+    },
+    "Decision Tree (d=3)": {
+      "P@20": 0.55,
+      "P@50": 0.52,
+      "P@100": 0.55,
+      "R@100": 0.0588,
+      "ROC-AUC": 0.8844,
+      "PR-AUC": 0.4266,
+      "P@50 lift": 5.4644,
+      "P@50 per-fold mean": 0.46,
+      "P@50 per-fold sd": 0.0693
+    },
+    "Random Forest": {
+      "P@20": 0.95,
+      "P@50": 0.92,
+      "P@100": 0.86,
+      "R@100": 0.0919,
+      "ROC-AUC": 0.9004,
+      "PR-AUC": 0.5621,
+      "P@50 lift": 9.6679,
+      "P@50 per-fold mean": 0.644,
+      "P@50 per-fold sd": 0.1632
+    },
+    "Gradient Boosting": {
+      "P@20": 0.95,
+      "P@50": 0.94,
+      "P@100": 0.87,
+      "R@100": 0.0929,
+      "ROC-AUC": 0.8978,
+      "PR-AUC": 0.5382,
+      "P@50 lift": 9.878,
+      "P@50 per-fold mean": 0.64,
+      "P@50 per-fold sd": 0.1654
+    }
+  },
+  "best_model": "Random Forest",
+  "base_rate": 0.0952,
+  "split_comparison": {
+    "BEFORE: random KFold(5)": {
+      "P@50 (pooled)": 1.0,
+      "P@50 (per-fold mean)": 0.844,
+      "P@50 (per-fold sd)": 0.071,
+      "ROC-AUC": 0.912,
+      "PR-AUC": 0.584,
+      "clients seen in training AND scoring, per fold": 24.4
+    },
+    "AFTER: GroupKFold(5) on client_id": {
+      "P@50 (pooled)": 0.92,
+      "P@50 (per-fold mean)": 0.644,
+      "P@50 (per-fold sd)": 0.163,
+      "ROC-AUC": 0.9,
+      "PR-AUC": 0.562,
+      "clients seen in training AND scoring, per fold": 0.0
+    }
+  },
+  "claim": "Measured out-of-fold under a client-grouped split, the learned ranking is directionally ahead of the Week-4 rule at K=50, but the gap sits inside the fold-to-fold spread -- the honest claim is 'not worse than the rule, plausibly somewhat better', not 'beats the rule'.",
+  "recommendations": {
+    "tiers": {
+      "A - review first": {
+        "pages": 922,
+        "observed_rate": 0.5239,
+        "lift_vs_base": 5.51
+      },
+      "B - review if slots remain": {
+        "pages": 1261,
+        "observed_rate": 0.2228,
+        "lift_vs_base": 2.34
+      },
+      "C - monitor only": {
+        "pages": 7653,
+        "observed_rate": 0.0225,
+        "lift_vs_base": 0.24
+      }
+    },
+    "archetype_action_map": {
+      "page_one_snippet_gap": "review_title_and_meta",
+      "page_two_climber": "review_title_meta_and_onpage_relevance",
+      "deep_page_shortfall": "relevance_and_internal_link_review",
+      "thin_informational": "check_page_answers_the_query",
+      "commercial_intent_review": "human_intent_check_before_content_work",
+      "navigational_no_action": "no_action_remove_from_queue",
+      "no_clear_archetype": "manual_triage"
+    },
+    "archetype_mix_top200": {
+      "page_two_climber": 158,
+      "page_one_snippet_gap": 33,
+      "deep_page_shortfall": 5,
+      "no_clear_archetype": 4
+    },
+    "decay": {
+      "persistence_flagged": 0.5149,
+      "persistence_unflagged": 0.0543,
+      "persistence_lift": 9.48,
+      "topK_overlap_next_window": {
+        "50": 0.54,
+        "100": 0.54,
+        "200": 0.525
+      },
+      "share_ctr_moved_over_50pct": 0.41,
+      "content_age_gradient": "none observable across quintiles",
+      "update_recency_gradient": "not testable -- column is near-degenerate in this slice"
+    },
+    "operational_rules": {
+      "rebuild_queue_days": 30,
+      "queue_void_after_days": 45,
+      "before_after_invalid_without_control_set": true
+    },
+    "never_automate": [
+      "publishing any title, meta or body text",
+      "de-indexing, deleting or redirecting",
+      "acting while the analytics-mismatch flag is open",
+      "page-by-page work while one client dominates the queue",
+      "any client-facing number or projected uplift",
+      "using the score to evaluate a writer or agency"
+    ],
+    "monetary_value": null,
+    "monetary_value_reason": "cpc = 0 on 76% of rows; search_volume = 0 on 37%"
+  },
+  "limitations": [
+    {
+      "limitation": "Not causal",
+      "measured as": "no intervention assigned, no control group",
+      "what it forbids": "cannot say a rewrite produces clicks"
+    },
+    {
+      "limitation": "Proxy label",
+      "measured as": "persisted_shortfall is an author-defined rule",
+      "what it forbids": "measures a gap staying open, not fixability"
+    },
+    {
+      "limitation": "Client concentration",
+      "measured as": "largest client = 40% of universe, 72% of top 50",
+      "what it forbids": "no portfolio-level claim"
+    },
+    {
+      "limitation": "Survivorship",
+      "measured as": "1,683 pages excluded from the later window (15%)",
+      "what it forbids": "rates describe pages that stayed measurable"
+    },
+    {
+      "limitation": "Edge is inside the noise",
+      "measured as": "per-fold P@50 sd = 0.163",
+      "what it forbids": "'not worse, plausibly better', not 'beats'"
+    },
+    {
+      "limitation": "Declared contamination",
+      "measured as": "position removed costs 0.005 PR-AUC",
+      "what it forbids": "bounded and disclosed, not removed"
+    },
+    {
+      "limitation": "One time window",
+      "measured as": "one pair of consecutive 30-day windows, no calendar dates",
+      "what it forbids": "no seasonality claim"
+    },
+    {
+      "limitation": "Starter slice",
+      "measured as": "30,000 rows, 28 clients",
+      "what it forbids": "not the ~79M-row warehouse release"
+    },
+    {
+      "limitation": "Blind to topic and quality",
+      "measured as": "0 of 16 features carry topic or text",
+      "what it forbids": "human is the only control"
+    },
+    {
+      "limitation": "Unreliable inputs",
+      "measured as": "cpc=0 on 76%, search_volume=0 on 37%, sessions/click missing on 20%",
+      "what it forbids": "no monetary figure computed anywhere"
+    }
+  ],
+  "figures": [
+    "fig1_reviewer_week.png",
+    "fig2_precision_at_k.png",
+    "fig3_split_honesty.png",
+    "fig4_queue_decay.png",
+    "fig5_tier_calibration.png"
+  ]
+}
