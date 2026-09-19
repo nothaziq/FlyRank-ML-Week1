@@ -8,7 +8,7 @@
     "split": "GroupKFold(5) on client_id, out-of-fold predictions",
     "declared_contamination": "avg_position is a 90d average overlapping the outcome window; no-position refit reported",
     "seed": 42,
-    "sklearn": "1.8.0"
+    "sklearn": "1.9.1"
   },
   "universe": {
     "pages": 9836,
@@ -43,7 +43,7 @@
       "P@100": 0.7,
       "R@100": 0.0748,
       "ROC-AUC": 0.8874,
-      "PR-AUC": 0.4502,
+      "PR-AUC": 0.4501,
       "P@50 lift vs base": 7.356,
       "P@50 per-fold sd": 0.1177
     },
@@ -58,27 +58,27 @@
       "P@50 per-fold sd": 0.0693
     },
     "Random Forest": {
-      "P@20": 0.95,
+      "P@20": 1.0,
       "P@50": 0.92,
-      "P@100": 0.86,
-      "R@100": 0.0919,
-      "ROC-AUC": 0.9004,
-      "PR-AUC": 0.5621,
+      "P@100": 0.89,
+      "R@100": 0.0951,
+      "ROC-AUC": 0.9017,
+      "PR-AUC": 0.5634,
       "P@50 lift vs base": 9.6679,
-      "P@50 per-fold sd": 0.1632
+      "P@50 per-fold sd": 0.151
     },
     "Gradient Boosting": {
-      "P@20": 0.95,
-      "P@50": 0.94,
-      "P@100": 0.87,
-      "R@100": 0.0929,
-      "ROC-AUC": 0.8978,
-      "PR-AUC": 0.5382,
-      "P@50 lift vs base": 9.878,
-      "P@50 per-fold sd": 0.1654
+      "P@20": 0.9,
+      "P@50": 0.88,
+      "P@100": 0.89,
+      "R@100": 0.0951,
+      "ROC-AUC": 0.8986,
+      "PR-AUC": 0.5369,
+      "P@50 lift vs base": 9.2475,
+      "P@50 per-fold sd": 0.1662
     }
   },
-  "best_model": "Gradient Boosting",
+  "best_model": "Random Forest",
   "p50_per_fold": {
     "Logistic Regression": [
       0.7,
@@ -95,17 +95,17 @@
       0.4
     ],
     "Random Forest": [
-      0.94,
-      0.62,
+      0.92,
+      0.64,
       0.54,
       0.66,
-      0.46
+      0.48
     ],
     "Gradient Boosting": [
       0.92,
-      0.74,
+      0.72,
       0.52,
-      0.52,
+      0.5,
       0.5
     ],
     "Rule baseline (Week 4)": [
@@ -118,45 +118,45 @@
   },
   "top_features_permutation": [
     {
-      "feature": "shortfall_clicks_prev",
-      "drop_in_PR_AUC": 0.2138
+      "feature": "log_impressions_prev",
+      "drop_in_PR_AUC": 0.1783
     },
     {
-      "feature": "log_impressions_prev",
-      "drop_in_PR_AUC": 0.2134
+      "feature": "shortfall_clicks_prev",
+      "drop_in_PR_AUC": 0.1601
     },
     {
       "feature": "ctr_prev",
-      "drop_in_PR_AUC": 0.0955
+      "drop_in_PR_AUC": 0.1022
     },
     {
       "feature": "ctr_vs_band_norm",
-      "drop_in_PR_AUC": 0.0391
+      "drop_in_PR_AUC": 0.0902
     },
     {
       "feature": "avg_position",
-      "drop_in_PR_AUC": 0.0191
+      "drop_in_PR_AUC": 0.0123
     }
   ],
   "no_position_refit": {
-    "Gradient Boosting (as reported)": {
-      "P@20": 0.95,
-      "P@50": 0.94,
-      "P@100": 0.87,
-      "R@100": 0.0929,
-      "ROC-AUC": 0.8978,
-      "PR-AUC": 0.5382,
-      "P@50 lift vs base": 9.878,
+    "Random Forest (as reported)": {
+      "P@20": 1.0,
+      "P@50": 0.92,
+      "P@100": 0.89,
+      "R@100": 0.0951,
+      "ROC-AUC": 0.9017,
+      "PR-AUC": 0.5634,
+      "P@50 lift vs base": 9.6679,
       "P@50 per-fold sd": null
     },
-    "Gradient Boosting (no position input)": {
+    "Random Forest (no position input)": {
       "P@20": 0.95,
-      "P@50": 0.88,
-      "P@100": 0.85,
-      "R@100": 0.0908,
-      "ROC-AUC": 0.8971,
-      "PR-AUC": 0.527,
-      "P@50 lift vs base": 9.2475,
+      "P@50": 0.86,
+      "P@100": 0.89,
+      "R@100": 0.0951,
+      "ROC-AUC": 0.8969,
+      "PR-AUC": 0.5304,
+      "P@50 lift vs base": 9.0374,
       "P@50 per-fold sd": null
     }
   }
